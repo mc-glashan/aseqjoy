@@ -1,0 +1,66 @@
+aseqjoy - a simple joystick to ALSA MIDI sequencer converter
+============================================================
+
+Copyright 2003-2016 by Alexander König - alex@lisas.de
+
+License: GNU General Public License Version 2 or (at your option) any later 
+version - for details please refer to the file [COPYING](./COPYING) included 
+with the aseqjoy source code.
+
+What it does: Each axis of the joystick device is mapped to a specific MIDI 
+controller. Moving the joystick along an axis will cause aseqjoy to emit
+MIDI controller messages via ALSA's sequencer API. The value of the controller
+message represents the joystick's position along the axis (eg 'left' -> 0, 
+'middle' -> 63, 'right' -> 127). Note that you can run aseqjoy with the '-r'
+commandline switch to use fine MIDI control change messages instead (with 14
+bit resolution).
+
+aseqjoy uses the ALSA sequencer API to emit the MIDI events. Therefor it
+creates and output port named after joystick used. You can then use for example
+aconnect (from alsa-utils), QjackCtl or Robert Ham's alsa-patch-bay to connect
+an aseqjoy instance to an input port of your choice. 
+
+Requirements
+------------
+
+* Current Linux system with joystick input drivers and ALSA sound system 
+  properly configured.
+
+Links
+-----
+
+* [aseqjoy homepage](https://terminatorx.org/addons/)
+* [ALSA homepage](http://www.alsa-project.org)
+* [Joystick utils](http://atrey.karlin.mff.cuni.cz/~vojtech/joystick/)
+* [QjackCtl](http://qjackctl.sourceforge.net/)
+* [ALSA-patch-bay](http://pkl.net/~node/alsa-patch-bay.html)
+
+Howto
+-----
+
+In some cases the joystick may not utilize the full range of available 
+controller values - in this case you should use "jscal" from the joystick
+package (most distributions feature this package) to calibrate your joystick 
+before running aseqjoy. Note: Analog PC joysticks are no high-precision 
+devices - so even after calibrating the device you might not always be able
+to reach "0" or "127" controller values - depending on the joystick you
+use.
+
+Start aseqjoy - if you have a working joystick (Nr. 0 - use the -d switch to
+select other joysticks) aseqjoy will detect that and map each axis of that 
+joystick to a controller from 10 on upwards:
+
+* Axis -> Controller 
+* 0 -> 10
+* 1 -> 11
+* 2 -> 12
+
+From now on aseqjoy emits events over the "Joystick0" output port. To make use
+of these events in another application use for example the alsa-patch-bay
+to connect that output port to another application's input sequencer port
+(for example the "terminatorX" input port for terminatorX). After you've bound
+the controllers to certain controls you should see how moving the joystick
+affects the corresponding control.
+
+Have Fun,
+Alex
